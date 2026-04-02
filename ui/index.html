@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Amharic → English Text | Neo‑Brutalist Converter</title>
+    <title>Amharic → Latin Harari | Neo‑Brutalist Converter</title>
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript" src="/eel.js"></script>
     <script src="js/script.js" defer></script>
@@ -11,97 +11,238 @@
 <body>
     <div class="neo-bg"></div>
     <main class="neo-container">
-        <div class="neo-card">
-            <div class="brand-header">
-                <div class="icon-badge">
+        <nav class="ubuntu-nav">
+            <div class="nav-left">
+                <a href="#" class="nav-item" data-tab="converter-tab">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M3 9L12 3L21 9L21 20H15V14H9V20H3V9Z" stroke="currentColor" fill="none"/>
+                        <path d="M9 20V14H15V20" stroke="currentColor" fill="none"/>
+                    </svg>
+                    <span class="item-text">Converter</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="projects-tab">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                    </svg>
+                    <span class="item-text">Projects</span>
+                </a>
+            </div>
+            <div class="logo-center">
+                <div class="logo-badge">
                     <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/>
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" fill="#ffd966" stroke-width="1.5"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" fill="none" stroke-width="1.5"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" fill="none" stroke-width="1.5"/>
+                        <text x="12" y="19" text-anchor="middle" fill="#1e1e2f" font-size="8" font-weight="bold">ሀ→H</text>
                     </svg>
-                </div>
-                <div class="title-section">
-                    <h1>Amharic → English Text</h1>
-                    <p class="subhead">Bold transliteration · offline · pure text</p>
-                    <div class="offline-badge">⚡ no internet · instant</div>
                 </div>
             </div>
+            <div class="nav-right"></div>
+        </nav>
 
-            <div class="input-field-group">
-                <div class="field-label">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 19V5M5 12h14" stroke="currentColor" stroke-linecap="round"/>
-                    </svg>
-                    <span>Amharic text</span>
-                </div>
-                <div class="textarea-wrapper">
-                    <textarea id="inputText" rows="5" placeholder="ለምሳሌ፡ ሰላም ልጅ እንዴት ነህ? ዛሬ ስራህ እንዴት ነው?"></textarea>
-                </div>
-                <div class="input-utilities">
-                    <div class="char-counter">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/>
-                            <path d="M12 8v4l3 3" stroke="currentColor"/>
+        <!-- Converter Tab -->
+        <div id="converter-tab" class="tab-content">
+            <div class="neo-card">
+                <div class="brand-header">
+                    <div class="icon-badge">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/>
                         </svg>
-                        <span id="charCount">0</span> <span>characters</span>
                     </div>
-                    <button id="clearInputBtn" class="utility-btn" title="Clear text">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor"/>
-                            <path d="M10 11v5M14 11v5" stroke="currentColor"/>
-                        </svg>
-                        <span>Clear</span>
-                    </button>
+                    <div class="title-section">
+                        <h1>Soba Harari → Latin harari</h1>
+                        <p class="subhead">Bold transliteration · offline · pure text</p>
+                        <div class="offline-badge">⚡ no internet · instant</div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="action-row">
-                <button id="convertBtn" class="btn-primary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 12h3l3-9 3 18 3-9h3" stroke="currentColor" stroke-linecap="round"/>
-                    </svg>
-                    <span>Convert to English</span>
-                </button>
-                <button id="exampleBtn" class="btn-secondary">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-linecap="round"/>
-                    </svg>
-                    <span>Example</span>
-                </button>
-            </div>
+                <div class="input-field-group">
+                    <div class="field-label">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 19V5M5 12h14" stroke="currentColor" stroke-linecap="round"/>
+                        </svg>
+                        <span>Soba Harari text</span>
+                    </div>
+                    <div class="textarea-wrapper">
+                        <textarea id="inputText" rows="5" placeholder="ለምሳሌ፡ ሰላም ልጅ እንዴት ነህ? ዛሬ ስራህ እንዴት ነው?"></textarea>
+                    </div>
+                    <div class="input-utilities">
+                        <div class="char-counter">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 8v4l3 3" stroke="currentColor"/>
+                            </svg>
+                            <span id="charCount">0</span> <span>characters</span>
+                        </div>
+                        <button id="clearInputBtn" class="utility-btn" title="Clear text">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" stroke="currentColor"/>
+                                <path d="M10 11v5M14 11v5" stroke="currentColor"/>
+                            </svg>
+                            <span>Clear</span>
+                        </button>
+                    </div>
+                </div>
 
-            <div class="output-section">
-                <div class="output-header">
-                    <div class="output-title">
+                <div class="action-row">
+                    <button id="convertBtn" class="btn-primary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor"/>
+                            <path d="M3 12h3l3-9 3 18 3-9h3" stroke="currentColor" stroke-linecap="round"/>
                         </svg>
-                        <h3>English output</h3>
-                    </div>
-                    <button id="copyBtn" class="copy-btn" disabled>
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor"/>
+                        <span>Convert to Latin Harari</span>
+                    </button>
+                    <button id="exampleBtn" class="btn-secondary">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor" stroke-linecap="round"/>
                         </svg>
-                        <span>Copy</span>
+                        <span>Example</span>
                     </button>
                 </div>
-                <div id="output" class="output-box">
-                    <div class="output-placeholder">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M20 12H4M12 4v16" stroke="currentColor"/>
-                        </svg>
-                        <span>Your English phonetic text will appear here</span>
-                    </div>
+
+                <div class="footer-note">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 6v6l4 2" stroke="currentColor"/>
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                    <span>local Python backend · text only</span>
                 </div>
             </div>
+        </div>
 
-            <div class="footer-note">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 6v6l4 2" stroke="currentColor"/>
-                    <circle cx="12" cy="12" r="10"/>
-                </svg>
-                <span>local Python backend · text only</span>
+        <!-- Projects Tab -->
+        <div id="projects-tab" class="tab-content active">
+            <div class="neo-card">
+                <div class="brand-header">
+                    <div class="icon-badge">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                        </svg>
+                    </div>
+                    <div class="title-section">
+                        <h1>Project Manager</h1>
+                        <p class="subhead">Save transliterations with photos · export to DOCX</p>
+                    </div>
+                </div>
+
+                <!-- Dynamic project list container -->
+                <div id="projectsListContainer"></div>
             </div>
         </div>
     </main>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Modal: Create Project -->
+    <div id="createProjectModal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3>📁 Create New Project</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="projectNameInput">Project name</label>
+                <input type="text" id="projectNameInput" placeholder="e.g., My Research, Notes, etc." autocomplete="off">
+            </div>
+            <div class="modal-footer">
+                <button id="modalCancelBtn" class="btn-secondary">Cancel</button>
+                <button id="modalConfirmBtn" class="btn-primary">Create Project</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Converter Result -->
+    <div id="converterResultModal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-container" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>🔤 Conversion Result</h3>
+                <button class="modal-close" id="closeConverterModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label>Latin Harari Output</label>
+                <div id="converterResultText" class="result-box"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="copyResultBtn" class="btn-primary">📋 Copy to Clipboard</button>
+                <button id="closeConverterModalBtn" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Project Editor (Create/Update) -->
+    <div id="projectEditorModal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-container" style="max-width: 750px;">
+            <div class="modal-header">
+                <h3 id="projectEditorTitle">✏️ Edit Project</h3>
+                <button class="modal-close" id="closeEditorModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editorProjectName">
+                
+                <div class="field-label">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor"/>
+                    </svg>
+                    <span>Converted text (Latin Harari)</span>
+                </div>
+                <textarea id="editorConvertedText" rows="5" placeholder="Converted text will appear here..."></textarea>
+
+                <div class="field-label" style="margin-top: 1.2rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <path d="M21 15l-5-4-3 3-4-4-5 5" stroke="currentColor"/>
+                    </svg>
+                    <span>Photos</span>
+                </div>
+                <div id="editorPhotosList" class="photos-grid"></div>
+                <div class="photo-upload">
+                    <input type="file" id="editorPhotoInput" multiple accept="image/*">
+                    <small>Add new photos (supports JPG, PNG, GIF) – order preserved</small>
+                </div>
+
+                <div class="action-row">
+                    <button id="editorSaveBtn" class="btn-primary">💾 Save Changes</button>
+                    <button id="editorExportBtn" class="btn-primary">📄 Export to DOCX</button>
+                    <button id="editorDeleteBtn" class="btn-secondary" style="background:#b91c1c; color:white;">🗑️ Delete Project</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Project Preview (read-only) -->
+    <div id="previewModal" class="modal" style="display: none;">
+        <div class="modal-overlay"></div>
+        <div class="modal-container" style="max-width: 750px;">
+            <div class="modal-header">
+                <h3>👁️ Project Preview</h3>
+                <button class="modal-close" id="closePreviewModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="previewContent" class="preview-card"></div>
+            </div>
+            <div class="modal-footer">
+                <button id="previewCloseBtn" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.nav-item[data-tab]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const tabId = link.getAttribute('data-tab');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>

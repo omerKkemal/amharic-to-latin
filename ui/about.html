@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>About | Soba Harari → Latin Harari</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="neo-bg"></div>
+    <main class="neo-container">
+        <!-- Ubuntu-style navbar (same as index) -->
+        <nav class="ubuntu-nav">
+            <div class="nav-left">
+                <a href="index.html" class="nav-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M3 9L12 3L21 9L21 20H15V14H9V20H3V9Z" stroke="currentColor" fill="none"/>
+                        <path d="M9 20V14H15V20" stroke="currentColor" fill="none"/>
+                    </svg>
+                    <span class="item-text">Home</span>
+                </a>
+                <a href="about.html" class="nav-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 16V12M12 8H12.01" stroke="currentColor" stroke-linecap="round"/>
+                    </svg>
+                    <span class="item-text">About</span>
+                </a>
+            </div>
+            <div class="logo-center">
+                <div class="logo-badge">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" fill="#ffd966" stroke-width="1.5"/>
+                        <path d="M2 17L12 22L22 17" stroke="currentColor" fill="none" stroke-width="1.5"/>
+                        <path d="M2 12L12 17L22 12" stroke="currentColor" fill="none" stroke-width="1.5"/>
+                        <text x="12" y="19" text-anchor="middle" fill="#1e1e2f" font-size="8" font-weight="bold">ሀ→H</text>
+                    </svg>
+                </div>
+            </div>
+            <div class="nav-right"></div>
+        </nav>
+
+        <!-- About content card -->
+        <div class="neo-card">
+            <div class="brand-header">
+                <div class="icon-badge">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="title-section">
+                    <h1>About the Converter</h1>
+                    <p class="subhead">Amharic (Soba Harari) → Latin Harari transliteration</p>
+                    <div class="offline-badge">⚡ 100% local · Python backend</div>
+                </div>
+            </div>
+
+            <div class="about-content" style="margin: 1rem 0 2rem 0; line-height: 1.6; color: #1e1e2f;">
+                <p style="margin-bottom: 1rem;"><strong>What is this?</strong> A neo‑brutalist web app that converts Amharic text (specifically the Harari dialect, also known as Soba Harari) into a Latin‑based phonetic representation. Perfect for language learners, linguists, or anyone who needs to read Harari in Latin script.</p>
+                
+                <p style="margin-bottom: 1rem;"><strong>How it works</strong> – The transliteration is handled by a local Python backend (Eel framework). No data leaves your machine: privacy‑first, offline ready.</p>
+                
+                <p style="margin-bottom: 1rem;"><strong>Features</strong> – Real‑time character count, one‑click copy, example text, and a bold, responsive interface with 15px rounded corners. The navigation bar follows Ubuntu‑style icons: hover over any icon to see the menu name.</p>
+
+                <div style="background: #fef9ef; border: 2px solid #1e1e2f; border-radius: 15px; padding: 1rem; margin: 1.5rem 0;">
+                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.5rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor"/>
+                        </svg>
+                        <strong>Tech stack</strong>
+                    </div>
+                    <ul style="margin-left: 1.5rem;">
+                        <li>Frontend: HTML5, CSS3 (Neo‑brutalist), vanilla JavaScript</li>
+                        <li>Backend: Python + Eel (bridges Python and web)</li>
+                        <li>Transliteration: custom Python mapping for Harari syllables</li>
+                    </ul>
+                </div>
+
+                <p><em>Version 1.0 · Built with ❤️ for language preservation.</em></p>
+            </div>
+
+            <div class="footer-note" style="margin-top: 1rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 6v6l4 2" stroke="currentColor"/>
+                    <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <span>open source · no tracking · made for the Harari community</span>
+            </div>
+        </div>
+    </main>
+    <script>
+    // Ensure normal navigation for Eel
+    document.querySelectorAll('a[href]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            if (href && (href.startsWith('/') || href.endsWith('.html'))) {
+                // Let the browser handle the full page load
+                return;
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,2 +1,3 @@
 pip install eel bottle bottle-websocket
 pyinstaller --onefile --noconsole --add-data="ui;ui" --hidden-import eel --hidden-import bottle --hidden-import bottle_websocket main.py
+pyinstaller --onefile --noconsole --add-data "ui:ui" --hidden-import eel --hidden-import bottle --hidden-import bottle_websocket main.py
