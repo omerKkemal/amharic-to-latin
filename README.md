@@ -4,39 +4,39 @@ A modern desktop application that transliterates Amharic (Soba Harari) script to
 
 ![Screenshot placeholder](https://via.placeholder.com/800x450?text=Amharic+Converter+App)
 
-## ✨ Features
+## Features
 
 ### Converter
-- 🔤 **Instant transliteration** – Amharic → Latin Harari phonetic text (modal result).
-- 📋 **Copy to clipboard** – One‑click copy of the result.
-- 📊 **Character counter** – Shows input length.
-- 📝 **Example text** – Loads a sample Amharic phrase.
-- 🧹 **Clear input** – Resets the textarea.
+- **Instant transliteration** – Amharic → Latin Harari phonetic text (modal result).
+- **Copy to clipboard** – One‑click copy of the result.
+- **Character counter** – Shows input length.
+- **Example text** – Loads a sample Amharic phrase.
+- **Clear input** – Resets the textarea.
 
 ### Project Manager
-- 📁 **Create / Edit / Delete projects** – Each project stores converted text and photos.
-- 🖼️ **Multiple photo upload** – Select several images at once; order is preserved.
-- 💾 **Smart save** – Converts any Amharic text to Latin Harari before saving.
-- 👁️ **Live preview** – After saving, a preview modal shows exactly how the DOCX will look (text + photo grid).
-- 📄 **Multi‑format export** – Export a single project as **DOCX**, **PPTX**, or **PDF** (select format in editor modal).
+- **Create / Edit / Delete projects** – Each project stores converted text and photos.
+- **Multiple photo upload** – Select several images at once; order is preserved.
+- **Smart save** – Converts any Amharic text to Latin Harari before saving.
+- **Live preview** – After saving, a preview modal shows exactly how the DOCX will look (text + photo grid).
+- **Multi‑format export** – Export a single project as **DOCX**, **PPTX**, or **PDF** (select format in editor modal).
 
 ### Merge Projects
-- 🔀 **Combine projects** – Select multiple existing projects, provide a new name, and choose an export format.
+- **Combine projects** – Select multiple existing projects, provide a new name, and choose an export format.
 - **Ordered merging** – Converted text from each project is appended with separators, and all photos are copied (renamed to avoid collisions).
 - **Automatic export** – The merged project is saved and immediately exported to the chosen format (DOCX, PPTX, or PDF).
 
 ### Dashboard
-- 📊 **Statistics** – Total projects, total photos, total characters across all projects.
-- 🕒 **Recent projects** – List of the 5 most recently modified projects with preview and update buttons.
+- **Statistics** – Total projects, total photos, total characters across all projects.
+- **Recent projects** – List of the 5 most recently modified projects with preview and update buttons.
 
 ### UI/UX
-- 🎨 **Modern neo‑brutalist design** – Thick black borders, offset shadows, monospace font, and 15px border radius.
-- 💬 **Toast notifications** – Non‑intrusive feedback for actions.
-- ⚡ **Loading animation** – Visual feedback while saving.
-- 🧩 **Fully modal‑based** – Converter results, project creation, editing, and preview all use custom modals.
-- 🖼️ **Logo integration** – Custom logo displayed in navigation bar and all tab headers (place `logo.png` in `ui/img/`).
+- **Modern neo‑brutalist design** – Thick black borders, offset shadows, monospace font, and 15px border radius.
+- **Toast notifications** – Non‑intrusive feedback for actions.
+- **Loading animation** – Visual feedback while saving.
+- **Fully modal‑based** – Converter results, project creation, editing, and preview all use custom modals.
+- **Logo integration** – Custom logo displayed in navigation bar and all tab headers (place `logo.png` in `ui/img/`).
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Component        | Technology                                         |
 |------------------|----------------------------------------------------|
@@ -50,7 +50,7 @@ A modern desktop application that transliterates Amharic (Soba Harari) script to
 | Screen detection | screeninfo                                         |
 | Styling          | Neo‑brutalist CSS, inline SVGs, 15px border radius|
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 amharic-latin-converter/
@@ -68,7 +68,7 @@ amharic-latin-converter/
 └── projects/                # Auto‑created; stores project data & photos
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -103,7 +103,7 @@ The application window opens (≈90% of screen size). You can now:
 - Create projects, upload photos, save (auto‑converts), and export to DOCX, PPTX, or PDF.
 - Merge multiple projects into one and export.
 
-## 📖 How to Use
+## How to Use
 
 ### Converter Tab
 1. Type or paste Amharic text in the textarea.
@@ -145,7 +145,7 @@ The application window opens (≈90% of screen size). You can now:
 - View total number of projects, total photos, and total characters.
 - See the five most recently modified projects with buttons to **Preview** or **Update** them.
 
-## 🗂️ Data Storage
+## Data Storage
 
 - All projects are stored in the `projects/` folder (created automatically on first run).
 - Each project has its own subfolder containing:
@@ -153,7 +153,7 @@ The application window opens (≈90% of screen size). You can now:
   - Uploaded image files (original resolution preserved; thumbnails generated for the UI).
 - Exported files (DOCX, PPTX, PDF) are saved inside the same project folder.
 
-## 🎨 Customization
+## Customization
 
 - **Colors, borders, shadows**: Edit `ui/css/style.css` – CSS variables are at the top.
 - **Border radius**: Currently `15px` for all major elements. Change the `--radius` variable.
@@ -161,7 +161,7 @@ The application window opens (≈90% of screen size). You can now:
 - **Logo**: Replace `ui/img/logo.png` with your own image (any size, will be scaled).
 - **Photo grid columns**: In `main.py` (DOCX export, PPTX slides, PDF layout) and `style.css` (preview modal), adjust the column count.
 
-## ❗ Troubleshooting
+## Troubleshooting
 
 - **No window appears?** Ensure Chromium/Chrome is installed. Eel uses your default Chrome installation.
 - **Conversion does nothing?** Check the terminal for errors. The backend must be running.
@@ -170,11 +170,11 @@ The application window opens (≈90% of screen size). You can now:
 - **Merge fails?** Ensure you have at least two projects with valid data. The new project name must not already exist.
 - **"NoneType" error?** This was fixed by adding guards in JavaScript. Ensure you're using the latest `script.js`.
 
-## 📜 License
+## License
 
 This project is open‑source and available under the **MIT License**. See the [LICENSE](LICENSE) file for details.
 
-## 🙌 Acknowledgements
+## Acknowledgements
 
 - [Eel](https://github.com/ChrisKnott/Eel) – for making Python + frontend desktop apps seamless.
 - [python-docx](https://python-docx.readthedocs.io/) – for DOCX generation.
