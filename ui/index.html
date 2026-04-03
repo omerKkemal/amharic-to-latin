@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Amharic → Latin Harari | Neo‑Brutalist Converter</title>
+    <link rel="icon" type="image/png" href="img/logo.png">
     <link rel="stylesheet" href="css/style.css">
     <script type="text/javascript" src="/eel.js"></script>
     <script src="js/script.js" defer></script>
@@ -13,6 +14,18 @@
     <main class="neo-container">
         <nav class="ubuntu-nav">
             <div class="nav-left">
+                <a href="#" class="nav-item active" data-tab="home-tab">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M3 9L12 3L21 9V20H15V14H9V20H3V9Z" stroke="currentColor" fill="none"/>
+                    </svg>
+                    <span class="item-text">Home</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="dashboard-tab">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z" stroke="currentColor" fill="none"/>
+                    </svg>
+                    <span class="item-text">Dashboard</span>
+                </a>
                 <a href="#" class="nav-item" data-tab="converter-tab">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
                         <path d="M3 9L12 3L21 9L21 20H15V14H9V20H3V9Z" stroke="currentColor" fill="none"/>
@@ -28,28 +41,116 @@
                     </svg>
                     <span class="item-text">Projects</span>
                 </a>
+                <a href="#" class="nav-item" data-tab="merge-tab">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor"/>
+                        <line x1="12" y1="8" x2="12" y2="16"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                    </svg>
+                    <span class="item-text">Merge</span>
+                </a>
             </div>
             <div class="logo-center">
                 <div class="logo-badge">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" fill="#ffd966" stroke-width="1.5"/>
-                        <path d="M2 17L12 22L22 17" stroke="currentColor" fill="none" stroke-width="1.5"/>
-                        <path d="M2 12L12 17L22 12" stroke="currentColor" fill="none" stroke-width="1.5"/>
-                        <text x="12" y="19" text-anchor="middle" fill="#1e1e2f" font-size="8" font-weight="bold">ሀ→H</text>
-                    </svg>
+                    <img src="img/logo.png" alt="Logo" class="nav-logo">
                 </div>
             </div>
             <div class="nav-right"></div>
         </nav>
+
+        <!-- Home Tab -->
+        <div id="home-tab" class="tab-content active">
+            <div class="neo-card home-card">
+                <div class="brand-header home-header">
+                    <div class="icon-badge">
+                        <img src="img/logo.png" alt="Logo" class="section-logo">
+                    </div>
+                    <div class="title-section">
+                        <h1>Welcome to Amharic → Latin Harari Converter</h1>
+                        <p class="subhead">Transliterate, organize, and export your work</p>
+                    </div>
+                </div>
+                <div class="home-content">
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">🔤</div>
+                            <h3>Instant Conversion</h3>
+                            <p>Convert Amharic text to Latin Harari phonetics in real time.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📁</div>
+                            <h3>Project Management</h3>
+                            <p>Create projects, save converted text, and organize your work.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">🖼️</div>
+                            <h3>Photo Upload</h3>
+                            <p>Attach multiple images to projects – order preserved.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">📄</div>
+                            <h3>Multiple Exports</h3>
+                            <p>Export as DOCX, PPTX, or PDF.</p>
+                        </div>
+                    </div>
+                    <div class="home-actions">
+                        <button id="homeConvertBtn" class="btn-primary">Go to Converter</button>
+                        <button id="homeProjectsBtn" class="btn-secondary">Browse Projects</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard-tab" class="tab-content">
+            <div class="neo-card">
+                <div class="brand-header">
+                    <div class="icon-badge">
+                        <img src="img/logo.png" alt="Logo" class="section-logo">
+                    </div>
+                    <div class="title-section">
+                        <h1>Dashboard</h1>
+                        <p class="subhead">Statistics and insights about your projects</p>
+                    </div>
+                </div>
+                <div id="dashboardContent" class="dashboard-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">📁</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Projects</span>
+                                <span id="totalProjects" class="stat-value">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🖼️</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Photos</span>
+                                <span id="totalPhotos" class="stat-value">0</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">🔤</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Total Characters</span>
+                                <span id="totalChars" class="stat-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recent-projects">
+                        <h3>📌 Recent Projects</h3>
+                        <div id="recentProjectsList" class="recent-list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Converter Tab -->
         <div id="converter-tab" class="tab-content">
             <div class="neo-card">
                 <div class="brand-header">
                     <div class="icon-badge">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" fill="currentColor"/>
-                        </svg>
+                        <img src="img/logo.png" alt="Logo" class="section-logo">
                     </div>
                     <div class="title-section">
                         <h1>Soba Harari → Latin harari</h1>
@@ -57,7 +158,6 @@
                         <div class="offline-badge">⚡ no internet · instant</div>
                     </div>
                 </div>
-
                 <div class="input-field-group">
                     <div class="field-label">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -85,7 +185,6 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="action-row">
                     <button id="convertBtn" class="btn-primary">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -100,7 +199,6 @@
                         <span>Example</span>
                     </button>
                 </div>
-
                 <div class="footer-note">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M12 6v6l4 2" stroke="currentColor"/>
@@ -112,31 +210,85 @@
         </div>
 
         <!-- Projects Tab -->
-        <div id="projects-tab" class="tab-content active">
+        <div id="projects-tab" class="tab-content">
             <div class="neo-card">
                 <div class="brand-header">
                     <div class="icon-badge">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                            <line x1="9" y1="9" x2="15" y2="15"/>
-                            <line x1="15" y1="9" x2="9" y2="15"/>
-                        </svg>
+                        <img src="img/logo.png" alt="Logo" class="section-logo">
                     </div>
                     <div class="title-section">
                         <h1>Project Manager</h1>
                         <p class="subhead">Save transliterations with photos · export to DOCX</p>
                     </div>
                 </div>
-
-                <!-- Dynamic project list container -->
+                <div class="projects-header">
+                    <button id="globalCreateBtn" class="btn-primary">+ Create New Project</button>
+                </div>
                 <div id="projectsListContainer"></div>
+            </div>
+        </div>
+
+        <!-- Merge Tab -->
+        <div id="merge-tab" class="tab-content">
+            <div class="neo-card">
+                <div class="brand-header">
+                    <div class="icon-badge">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" stroke="currentColor"/>
+                            <line x1="12" y1="8" x2="12" y2="16"/>
+                            <line x1="8" y1="12" x2="16" y2="12"/>
+                        </svg>
+                    </div>
+                    <div class="title-section">
+                        <h1>Merge Projects</h1>
+                        <p class="subhead">Combine multiple projects into one and export</p>
+                    </div>
+                </div>
+                <div class="merge-container">
+                    <div class="merge-form">
+                        <div class="field-label">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor"/>
+                            </svg>
+                            <span>New Merged Project Name</span>
+                        </div>
+                        <input type="text" id="mergedProjectName" placeholder="e.g., Combined Research" class="merge-input">
+                        <div class="field-label" style="margin-top: 1rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 8v4l3 3M12 8v4l-3 3" stroke="currentColor"/>
+                            </svg>
+                            <span>Select Projects to Merge</span>
+                        </div>
+                        <div id="mergeProjectsList" class="merge-projects-grid"></div>
+                        <div class="field-label" style="margin-top: 1rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 12h3l3-9 3 18 3-9h3" stroke="currentColor"/>
+                            </svg>
+                            <span>Export Format</span>
+                        </div>
+                        <div class="format-selector">
+                            <label class="format-option">
+                                <input type="radio" name="exportFormat" value="docx" checked> 📄 DOCX
+                            </label>
+                            <label class="format-option">
+                                <input type="radio" name="exportFormat" value="pptx"> 📊 PPTX
+                            </label>
+                            <label class="format-option">
+                                <input type="radio" name="exportFormat" value="pdf"> 📑 PDF
+                            </label>
+                        </div>
+                        <div class="action-row">
+                            <button id="mergeBtn" class="btn-primary">🔀 Merge & Export</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
 
     <div id="toast" class="toast"></div>
 
-    <!-- Modal: Create Project -->
+    <!-- Modals -->
     <div id="createProjectModal" class="modal" style="display: none;">
         <div class="modal-overlay"></div>
         <div class="modal-container">
@@ -155,7 +307,6 @@
         </div>
     </div>
 
-    <!-- Modal: Converter Result -->
     <div id="converterResultModal" class="modal" style="display: none;">
         <div class="modal-overlay"></div>
         <div class="modal-container" style="max-width: 600px;">
@@ -174,7 +325,6 @@
         </div>
     </div>
 
-    <!-- Modal: Project Editor (Create/Update) -->
     <div id="projectEditorModal" class="modal" style="display: none;">
         <div class="modal-overlay"></div>
         <div class="modal-container" style="max-width: 750px;">
@@ -184,7 +334,6 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="editorProjectName">
-                
                 <div class="field-label">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M4 7h16M4 12h16M4 17h10" stroke="currentColor"/>
@@ -192,7 +341,6 @@
                     <span>Converted text (Latin Harari)</span>
                 </div>
                 <textarea id="editorConvertedText" rows="5" placeholder="Converted text will appear here..."></textarea>
-
                 <div class="field-label" style="margin-top: 1.2rem;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
@@ -206,17 +354,33 @@
                     <input type="file" id="editorPhotoInput" multiple accept="image/*">
                     <small>Add new photos (supports JPG, PNG, GIF) – order preserved</small>
                 </div>
-
+                <!-- Export Format Selector -->
+                <div class="field-label" style="margin-top: 1.2rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12h3l3-9 3 18 3-9h3" stroke="currentColor"/>
+                    </svg>
+                    <span>Export Format</span>
+                </div>
+                <div class="format-selector" id="editorFormatSelector">
+                    <label class="format-option">
+                        <input type="radio" name="editorExportFormat" value="docx" checked> 📄 DOCX
+                    </label>
+                    <label class="format-option">
+                        <input type="radio" name="editorExportFormat" value="pptx"> 📊 PPTX
+                    </label>
+                    <label class="format-option">
+                        <input type="radio" name="editorExportFormat" value="pdf"> 📑 PDF
+                    </label>
+                </div>
                 <div class="action-row">
                     <button id="editorSaveBtn" class="btn-primary">💾 Save Changes</button>
-                    <button id="editorExportBtn" class="btn-primary">📄 Export to DOCX</button>
+                    <button id="editorExportBtn" class="btn-primary">📄 Export</button>
                     <button id="editorDeleteBtn" class="btn-secondary" style="background:#b91c1c; color:white;">🗑️ Delete Project</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal: Project Preview (read-only) -->
     <div id="previewModal" class="modal" style="display: none;">
         <div class="modal-overlay"></div>
         <div class="modal-container" style="max-width: 750px;">
@@ -234,15 +398,28 @@
     </div>
 
     <script>
-        // Tab switching
+        // Tab switching with active class
         document.querySelectorAll('.nav-item[data-tab]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const tabId = link.getAttribute('data-tab');
                 document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                 document.getElementById(tabId).classList.add('active');
+                link.classList.add('active');
+                if (tabId === 'dashboard-tab' && typeof refreshDashboard === 'function') {
+                    refreshDashboard();
+                }
+                if (tabId === 'merge-tab' && typeof loadMergeProjects === 'function') {
+                    loadMergeProjects();
+                }
             });
         });
+
+        const globalCreateBtn = document.getElementById('globalCreateBtn');
+        if (globalCreateBtn && typeof window.showCreateProjectModal === 'function') {
+            globalCreateBtn.addEventListener('click', window.showCreateProjectModal);
+        }
     </script>
 </body>
 </html>

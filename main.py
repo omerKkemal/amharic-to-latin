@@ -1,14 +1,21 @@
 import eel
 import unicodedata
-import os
 import json
 import base64
 import shutil
+import time
 from pathlib import Path
 from PIL import Image
 import io
 from docx import Document
 from docx.shared import Inches, Cm
+from pptx import Presentation
+from pptx.util import Inches as PptxInches
+from reportlab.lib.pagesizes import A4
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, PageBreak
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import mm
+from reportlab.lib.enums import TA_CENTER
 from screeninfo import get_monitors
 
 # ---------- Transliteration mapping ----------
@@ -77,11 +84,15 @@ def _load_metadata(project_path: Path) -> dict:
     meta_path = _get_metadata_path(project_path)
     if meta_path.exists():
         with open(meta_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {"converted_text": "", "photos": []}
+            data = json.load(f)
+        if "last_modified" not in data:
+            data["last_modified"] = 0
+        return data
+    return {"converted_text": "", "photos": [], "last_modified": 0}
 
 def _save_metadata(project_path: Path, data: dict):
     meta_path = _get_metadata_path(project_path)
+    data["last_modified"] = time.time()
     with open(meta_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
@@ -91,6 +102,20 @@ def list_projects():
     for item in PROJECTS_DIR.iterdir():
         if item.is_dir() and _get_metadata_path(item).exists():
             projects.append(item.name)
+    return projects
+
+@eel.expose
+def get_all_projects():
+    """Return list of all project names with metadata for merge tab."""
+    projects = []
+    for item in PROJECTS_DIR.iterdir():
+        if item.is_dir() and _get_metadata_path(item).exists():
+            metadata = _load_metadata(item)
+            projects.append({
+                "name": item.name,
+                "text_length": len(metadata.get("converted_text", "")),
+                "photo_count": len(metadata.get("photos", []))
+            })
     return projects
 
 @eel.expose
@@ -147,8 +172,7 @@ def get_project_data(project_name: str):
             else:
                 photos.append({"name": photo_rel, "thumb": ""})
         return {"converted_text": converted_text, "photos": photos}
-    except Exception as e:
-        print(f"Error in get_project_data: {e}")
+    except Exception:
         return {"converted_text": "", "photos": []}
 
 @eel.expose
@@ -174,7 +198,6 @@ def upload_photos(project_name: str, photo_data_list: list):
             try:
                 img_data = base64.b64decode(base64_data)
                 file_path = project_path / safe_filename
-                # Avoid duplicate names
                 counter = 1
                 original_path = file_path
                 while file_path.exists():
@@ -187,8 +210,7 @@ def upload_photos(project_name: str, photo_data_list: list):
                 saved_names.append(file_path.name)
             except Exception:
                 continue
-        
-        # Preserve order: append new photos to the end of existing list
+
         existing_photos = metadata.get("photos", [])
         for name in saved_names:
             if name not in existing_photos:
@@ -220,38 +242,24 @@ def export_project_to_docx(project_name: str) -> str:
         project_path = _get_project_path(project_name)
         metadata = _load_metadata(project_path)
         doc = Document()
-        
-        # Title
         doc.add_heading(f"Project: {project_name}", 0)
-        
-        # Converted text section
         doc.add_heading("Converted Text (Latin Harari)", level=1)
         doc.add_paragraph(metadata.get("converted_text", "") or "(No text saved)")
-        
-        # Photos section with grid layout (3 columns)
         photos = metadata.get("photos", [])
         if photos:
             doc.add_heading("Photos", level=1)
-            
             cols = 3
             rows = (len(photos) + cols - 1) // cols
-            
-            # Create a table with rows and cols
             table = doc.add_table(rows=rows, cols=cols)
             table.style = 'Table Grid'
             table.autofit = False
-            
-            # Set column widths (equal)
             for cell in table.columns:
                 cell.width = Cm(5.5)
-            
-            # Fill table with photos
             for idx, photo_rel in enumerate(photos):
                 row = idx // cols
                 col = idx % cols
                 cell = table.cell(row, col)
-                cell.paragraphs[0].clear()  # Remove default empty paragraph
-                
+                cell.paragraphs[0].clear()
                 photo_path = project_path / photo_rel
                 if photo_path.exists():
                     try:
@@ -264,17 +272,186 @@ def export_project_to_docx(project_name: str) -> str:
                     cell.text = f"[Missing: {photo_rel}]"
         else:
             doc.add_paragraph("No photos attached to this project.")
-        
         export_path = project_path / f"{project_name}_export.docx"
         doc.save(str(export_path))
         return str(export_path)
-    except Exception as e:
-        print(f"Export error: {e}")
+    except Exception:
         return ""
+
+@eel.expose
+def export_project_to_pptx(project_name: str) -> str:
+    """Export project to PowerPoint presentation."""
+    if not project_name:
+        return ""
+    try:
+        project_path = _get_project_path(project_name)
+        metadata = _load_metadata(project_path)
+        prs = Presentation()
+        # Title slide
+        title_slide_layout = prs.slide_layouts[0]
+        slide = prs.slides.add_slide(title_slide_layout)
+        title = slide.shapes.title
+        subtitle = slide.placeholders[1]
+        title.text = f"Project: {project_name}"
+        subtitle.text = "Exported from Amharic Converter"
+        # Text slide
+        bullet_slide_layout = prs.slide_layouts[1]
+        slide = prs.slides.add_slide(bullet_slide_layout)
+        title = slide.shapes.title
+        title.text = "Converted Text (Latin Harari)"
+        body = slide.placeholders[1]
+        tf = body.text_frame
+        tf.text = metadata.get("converted_text", "") or "(No text saved)"
+        # Photos slides
+        photos = metadata.get("photos", [])
+        if photos:
+            photos_per_slide = 6
+            for i in range(0, len(photos), photos_per_slide):
+                slide = prs.slides.add_slide(prs.slide_layouts[6])
+                left = PptxInches(0.5)
+                top = PptxInches(1.5)
+                width = PptxInches(3)
+                height = PptxInches(2.5)
+                for j, photo_rel in enumerate(photos[i:i+photos_per_slide]):
+                    photo_path = project_path / photo_rel
+                    if photo_path.exists():
+                        try:
+                            col = j % 3
+                            row = j // 3
+                            pic_left = left + (col * (width + PptxInches(0.3)))
+                            pic_top = top + (row * (height + PptxInches(0.5)))
+                            slide.shapes.add_picture(str(photo_path), pic_left, pic_top, width=width, height=height)
+                        except Exception:
+                            pass
+        export_path = project_path / f"{project_name}_export.pptx"
+        prs.save(str(export_path))
+        return str(export_path)
+    except Exception as e:
+        print(f"PPTX export error: {e}")
+        return ""
+
+@eel.expose
+def export_project_to_pdf(project_name: str) -> str:
+    """Export project to PDF using ReportLab."""
+    if not project_name:
+        return ""
+    try:
+        project_path = _get_project_path(project_name)
+        metadata = _load_metadata(project_path)
+        pdf_path = project_path / f"{project_name}_export.pdf"
+        doc = SimpleDocTemplate(str(pdf_path), pagesize=A4,
+                                rightMargin=20*mm, leftMargin=20*mm,
+                                topMargin=20*mm, bottomMargin=20*mm)
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle('CustomTitle', parent=styles['Title'],
+                                     alignment=TA_CENTER, fontSize=16, spaceAfter=12)
+        heading_style = ParagraphStyle('CustomHeading', parent=styles['Heading1'],
+                                       fontSize=14, spaceAfter=8)
+        normal_style = styles['Normal']
+        story = []
+        story.append(Paragraph(f"Project: {project_name}", title_style))
+        story.append(Spacer(1, 12))
+        story.append(Paragraph("Converted Text (Latin Harari)", heading_style))
+        story.append(Spacer(1, 6))
+        text = metadata.get("converted_text", "") or "(No text saved)"
+        story.append(Paragraph(text.replace('\n', '<br/>'), normal_style))
+        story.append(Spacer(1, 12))
+        photos = metadata.get("photos", [])
+        if photos:
+            story.append(Paragraph("Photos", heading_style))
+            story.append(Spacer(1, 6))
+            for idx, photo_rel in enumerate(photos):
+                photo_path = project_path / photo_rel
+                if photo_path.exists():
+                    try:
+                        img = RLImage(str(photo_path), width=80*mm, height=80*mm)
+                        story.append(img)
+                        story.append(Paragraph(photo_rel, normal_style))
+                        if (idx + 1) % 3 == 0:
+                            story.append(PageBreak())
+                        else:
+                            story.append(Spacer(1, 6))
+                    except Exception:
+                        story.append(Paragraph(f"[Could not embed: {photo_rel}]", normal_style))
+        doc.build(story)
+        return str(pdf_path)
+    except Exception as e:
+        print(f"PDF export error: {e}")
+        return ""
+
+@eel.expose
+def merge_projects(project_names: list, new_project_name: str, export_format: str) -> dict:
+    if not project_names or not new_project_name:
+        return {"success": False, "error": "No projects selected or invalid name"}
+    try:
+        success = create_project(new_project_name)
+        if not success:
+            return {"success": False, "error": "Project name already exists or invalid"}
+        new_project_path = _get_project_path(new_project_name)
+        merged_text = ""
+        all_photos = []
+        for proj_name in project_names:
+            proj_path = _get_project_path(proj_name)
+            metadata = _load_metadata(proj_path)
+            merged_text += f"\n\n--- From project: {proj_name} ---\n\n"
+            merged_text += metadata.get("converted_text", "") + "\n"
+            for photo_rel in metadata.get("photos", []):
+                src_photo = proj_path / photo_rel
+                if src_photo.exists():
+                    new_name = f"{proj_name}_{photo_rel}"
+                    dst_photo = new_project_path / new_name
+                    counter = 1
+                    original_dst = dst_photo
+                    while dst_photo.exists():
+                        stem = original_dst.stem
+                        suffix = original_dst.suffix
+                        dst_photo = original_dst.parent / f"{stem}_{counter}{suffix}"
+                        counter += 1
+                    shutil.copy2(src_photo, dst_photo)
+                    all_photos.append(dst_photo.name)
+        merged_text = merged_text.strip()
+        _save_metadata(new_project_path, {"converted_text": merged_text, "photos": all_photos})
+        export_path = ""
+        if export_format == "docx":
+            export_path = export_project_to_docx(new_project_name)
+        elif export_format == "pptx":
+            export_path = export_project_to_pptx(new_project_name)
+        elif export_format == "pdf":
+            export_path = export_project_to_pdf(new_project_name)
+        if not export_path:
+            return {"success": False, "error": f"Export to {export_format} failed"}
+        return {"success": True, "new_project_name": new_project_name, "export_path": export_path}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@eel.expose
+def get_dashboard_stats():
+    total_projects = 0
+    total_photos = 0
+    total_chars = 0
+    recent = []
+    for item in PROJECTS_DIR.iterdir():
+        if item.is_dir() and _get_metadata_path(item).exists():
+            metadata = _load_metadata(item)
+            total_projects += 1
+            total_photos += len(metadata.get("photos", []))
+            total_chars += len(metadata.get("converted_text", ""))
+            recent.append({
+                "name": item.name,
+                "last_modified": metadata.get("last_modified", 0),
+                "photo_count": len(metadata.get("photos", [])),
+                "text_length": len(metadata.get("converted_text", ""))
+            })
+    recent.sort(key=lambda x: x["last_modified"], reverse=True)
+    return {
+        "total_projects": total_projects,
+        "total_photos": total_photos,
+        "total_characters": total_chars,
+        "recent_projects": recent[:5]
+    }
 
 # ---------- Start the app ----------
 eel.init('ui')
-
 try:
     screen = get_monitors()[0]
     screen_width = screen.width - screen.width * 0.1
@@ -282,5 +459,4 @@ try:
 except:
     screen_width = 1200
     screen_height = 800
-
 eel.start('index.html', size=(int(screen_width), int(screen_height)))

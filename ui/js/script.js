@@ -1,5 +1,7 @@
 // ui/js/script.js – Modal-based converter and project manager
-// with loading animation, auto-preview after save, and ordered photos
+// with loading animation, auto-preview after save, and merge functionality
+// Added multiple export formats (DOCX, PPTX, PDF) in project editor
+// Fixed: "+ Create New Project" button in Projects tab
 
 document.addEventListener('DOMContentLoaded', () => {
     // ---------- DOM Elements ----------
@@ -16,13 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectEditorModal = document.getElementById('projectEditorModal');
     const previewModal = document.getElementById('previewModal');
 
-    // Converter modal elements
     const converterResultText = document.getElementById('converterResultText');
     const copyResultBtn = document.getElementById('copyResultBtn');
     const closeConverterModal = document.getElementById('closeConverterModal');
     const closeConverterModalBtn = document.getElementById('closeConverterModalBtn');
 
-    // Editor modal elements
     const editorProjectName = document.getElementById('editorProjectName');
     const editorConvertedText = document.getElementById('editorConvertedText');
     const editorPhotosList = document.getElementById('editorPhotosList');
@@ -32,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const editorDeleteBtn = document.getElementById('editorDeleteBtn');
     const closeEditorModal = document.getElementById('closeEditorModal');
 
-    // Preview modal
     const previewContent = document.getElementById('previewContent');
     const closePreviewModal = document.getElementById('closePreviewModal');
     const previewCloseBtn = document.getElementById('previewCloseBtn');
@@ -64,7 +63,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Loading state management for save button
     function setSaveButtonLoading(isLoading) {
         if (isLoading) {
             editorSaveBtn.disabled = true;
@@ -86,7 +84,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ---------- Converter (modal result) ----------
+    function setExportButtonLoading(isLoading) {
+        if (isLoading) {
+            editorExportBtn.disabled = true;
+            editorExportBtn.innerHTML = `<span>⏳ Exporting...</span>`;
+        } else {
+            editorExportBtn.disabled = false;
+            editorExportBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h3l3-9 3 18 3-9h3" stroke="currentColor"/></svg> 📄 Export`;
+        }
+    }
+
+    // ---------- Converter ----------
     function updateCharCount() {
         charCountSpan.textContent = inputText.value.length;
     }
@@ -117,12 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.error(err);
             showToast('Conversion failed. Check backend.', 'error');
+            converterResultText.textContent = 'Error: Could not convert text.';
+            converterResultModal.style.display = 'flex';
         }
     });
 
     copyResultBtn.addEventListener('click', async () => {
         const text = converterResultText.textContent;
-        if (text && text !== '(empty result)') {
+        if (text && text !== '(empty result)' && !text.startsWith('Error')) {
             await navigator.clipboard.writeText(text);
             showToast('Copied to clipboard!');
         } else {
@@ -142,13 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // ---------- Project Manager ----------
     let currentEditingProject = null;
 
-    function showCreateProjectModal() {
+    window.showCreateProjectModal = function() {
         createProjectModal.style.display = 'flex';
         document.getElementById('projectNameInput').focus();
-    }
+    };
     function hideCreateProjectModal() { createProjectModal.style.display = 'none'; }
-    
-    function showEditorModal(projectName) {
+
+    window.showEditorModal = function(projectName) {
         if (!projectName) {
             showToast('Invalid project name', 'error');
             return;
@@ -158,20 +168,20 @@ document.addEventListener('DOMContentLoaded', () => {
         editorProjectName.value = projectName;
         loadProjectIntoEditor(projectName);
         projectEditorModal.style.display = 'flex';
-    }
+    };
     function hideEditorModal() {
         projectEditorModal.style.display = 'none';
         currentEditingProject = null;
     }
-    
-    function showPreviewModal(projectName) {
+
+    window.showPreviewModal = function(projectName) {
         if (!projectName) {
             showToast('Invalid project name', 'error');
             return;
         }
         loadPreview(projectName);
         previewModal.style.display = 'flex';
-    }
+    };
     function hidePreviewModal() { previewModal.style.display = 'none'; }
 
     async function loadProjectIntoEditor(projectName) {
@@ -203,19 +213,15 @@ document.addEventListener('DOMContentLoaded', () => {
         editorPhotosList.innerHTML = html;
     }
 
-    // ========== SAVE FUNCTION with LOADING and AUTO-PREVIEW ==========
     async function saveProjectChanges() {
         if (!currentEditingProject || typeof currentEditingProject !== 'string' || currentEditingProject.trim() === '') {
             showToast('No valid project selected', 'error');
             return;
         }
-        
         setSaveButtonLoading(true);
-        
         try {
             const rawText = editorConvertedText.value;
             let convertedText = rawText;
-            
             if (rawText.trim()) {
                 try {
                     convertedText = await eel.amharic_to_english_sound(rawText)();
@@ -227,9 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     convertedText = rawText;
                 }
             }
-            
             await eel.save_converted_text(currentEditingProject, convertedText)();
-            
             const files = editorPhotoInput.files;
             if (files.length > 0) {
                 const photoDataList = [];
@@ -241,16 +245,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast(`Uploaded ${photoDataList.length} photo(s)`);
                 editorPhotoInput.value = '';
             }
-            
             await loadProjectIntoEditor(currentEditingProject);
             refreshProjectsList();
-            
             showToast('Project saved successfully!');
-            
-            // Auto-open preview modal after save
             hideEditorModal();
             showPreviewModal(currentEditingProject);
-            
         } catch (err) {
             console.error(err);
             showToast('Save failed: ' + (err.message || 'Unknown error'), 'error');
@@ -264,11 +263,29 @@ document.addEventListener('DOMContentLoaded', () => {
             showToast('No project selected', 'error');
             return;
         }
+        const formatRadio = document.querySelector('input[name="editorExportFormat"]:checked');
+        const format = formatRadio ? formatRadio.value : 'docx';
+        
+        setExportButtonLoading(true);
         try {
-            const path = await eel.export_project_to_docx(currentEditingProject)();
-            showToast(`Exported: ${path}`);
+            let exportPath = '';
+            if (format === 'docx') {
+                exportPath = await eel.export_project_to_docx(currentEditingProject)();
+            } else if (format === 'pptx') {
+                exportPath = await eel.export_project_to_pptx(currentEditingProject)();
+            } else if (format === 'pdf') {
+                exportPath = await eel.export_project_to_pdf(currentEditingProject)();
+            }
+            if (exportPath) {
+                showToast(`Exported to ${format.toUpperCase()}: ${exportPath}`, 'success');
+            } else {
+                showToast(`Export to ${format.toUpperCase()} failed`, 'error');
+            }
         } catch (err) {
+            console.error(err);
             showToast('Export failed', 'error');
+        } finally {
+            setExportButtonLoading(false);
         }
     }
 
@@ -283,6 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showToast(`Deleted "${currentEditingProject}"`);
                 hideEditorModal();
                 refreshProjectsList();
+                if (typeof refreshDashboard === 'function') refreshDashboard();
             } catch (err) {
                 showToast('Delete failed', 'error');
             }
@@ -349,17 +367,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         <line x1="9" y1="9" x2="15" y2="15"/>
                         <line x1="15" y1="9" x2="9" y2="15"/>
                     </svg>
-                    <p>No projects yet</p>
-                    <button id="emptyCreateBtn" class="btn-primary">Create New Project</button>
+                    <p>No projects yet. Click "Create New Project" to start.</p>
                 </div>
             `;
-            const emptyBtn = document.getElementById('emptyCreateBtn');
-            if (emptyBtn) emptyBtn.addEventListener('click', showCreateProjectModal);
             return;
         }
-
-        let html = `<div class="projects-header"><button id="topCreateBtn" class="btn-primary">+ Create New Project</button></div>`;
-        html += `<div class="projects-grid">`;
+        let html = `<div class="projects-grid">`;
         for (let p of projects) {
             html += `
                 <div class="project-card" data-project="${escapeHtml(p)}">
@@ -373,8 +386,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         html += `</div>`;
         projectsListContainer.innerHTML = html;
-
-        document.getElementById('topCreateBtn')?.addEventListener('click', showCreateProjectModal);
         document.querySelectorAll('.preview-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -391,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Create project modal logic
+    // Create project modal
     const projectNameInput = document.getElementById('projectNameInput');
     const modalConfirmBtn = document.getElementById('modalConfirmBtn');
     const modalCancelBtn = document.getElementById('modalCancelBtn');
@@ -406,6 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideCreateProjectModal();
                 refreshProjectsList();
                 showEditorModal(name);
+                if (typeof refreshDashboard === 'function') refreshDashboard();
             } else {
                 showToast('Project already exists', 'error');
             }
@@ -424,7 +436,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') createProject();
     });
 
-    // Editor modal buttons
     editorSaveBtn.addEventListener('click', saveProjectChanges);
     editorExportBtn.addEventListener('click', exportProject);
     editorDeleteBtn.addEventListener('click', deleteCurrentProject);
@@ -433,7 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === projectEditorModal) hideEditorModal();
     });
 
-    // Preview modal close
     function closePreview() { previewModal.style.display = 'none'; }
     closePreviewModal.addEventListener('click', closePreview);
     previewCloseBtn.addEventListener('click', closePreview);
@@ -441,6 +451,151 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === previewModal) closePreview();
     });
 
-    // Initial load
+    // ---------- Global Create Project Button (Projects Tab) ----------
+    const globalCreateBtn = document.getElementById('globalCreateBtn');
+    if (globalCreateBtn) {
+        globalCreateBtn.addEventListener('click', () => {
+            window.showCreateProjectModal();
+        });
+    }
+
+    // ---------- Home Tab Buttons ----------
+    const homeConvertBtn = document.getElementById('homeConvertBtn');
+    const homeProjectsBtn = document.getElementById('homeProjectsBtn');
+    if (homeConvertBtn) {
+        homeConvertBtn.addEventListener('click', () => {
+            document.querySelector('.nav-item[data-tab="converter-tab"]').click();
+        });
+    }
+    if (homeProjectsBtn) {
+        homeProjectsBtn.addEventListener('click', () => {
+            document.querySelector('.nav-item[data-tab="projects-tab"]').click();
+        });
+    }
+
+    // ---------- Dashboard ----------
+    async function refreshDashboard() {
+        try {
+            const stats = await eel.get_dashboard_stats()();
+            document.getElementById('totalProjects').textContent = stats.total_projects;
+            document.getElementById('totalPhotos').textContent = stats.total_photos;
+            document.getElementById('totalChars').textContent = stats.total_characters.toLocaleString();
+            const recentList = document.getElementById('recentProjectsList');
+            if (stats.recent_projects && stats.recent_projects.length > 0) {
+                let html = '<div class="recent-grid">';
+                for (let proj of stats.recent_projects) {
+                    const date = new Date(proj.last_modified * 1000);
+                    const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                    html += `
+                        <div class="recent-card" data-project="${escapeHtml(proj.name)}">
+                            <div class="recent-name">📁 ${escapeHtml(proj.name)}</div>
+                            <div class="recent-meta">
+                                <span>🖼️ ${proj.photo_count} photos</span>
+                                <span>🔤 ${proj.text_length} chars</span>
+                                <span>🕒 ${formattedDate}</span>
+                            </div>
+                            <div class="recent-actions">
+                                <button class="action-btn preview-recent" data-project="${escapeHtml(proj.name)}">Preview</button>
+                                <button class="action-btn update-recent" data-project="${escapeHtml(proj.name)}">Update</button>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+                recentList.innerHTML = html;
+                document.querySelectorAll('.preview-recent').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const project = btn.getAttribute('data-project');
+                        showPreviewModal(project);
+                    });
+                });
+                document.querySelectorAll('.update-recent').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const project = btn.getAttribute('data-project');
+                        showEditorModal(project);
+                    });
+                });
+            } else {
+                recentList.innerHTML = '<div class="placeholder">No projects yet. Create one!</div>';
+            }
+        } catch (err) {
+            console.error(err);
+            document.getElementById('totalProjects').textContent = 'Error';
+        }
+    }
+    window.refreshDashboard = refreshDashboard;
+
+    // ---------- Merge Tab Functions ----------
+    window.loadMergeProjects = async function() {
+        try {
+            const projects = await eel.get_all_projects()();
+            const container = document.getElementById('mergeProjectsList');
+            if (!projects.length) {
+                container.innerHTML = '<div class="empty-state">No projects available to merge.</div>';
+                return;
+            }
+            let html = '';
+            for (let proj of projects) {
+                html += `
+                    <div class="project-checkbox-item">
+                        <input type="checkbox" value="${escapeHtml(proj.name)}" id="merge_${escapeHtml(proj.name)}">
+                        <label for="merge_${escapeHtml(proj.name)}">📁 ${escapeHtml(proj.name)}</label>
+                        <span class="project-meta">${proj.text_length} chars, ${proj.photo_count} photos</span>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+        } catch (err) {
+            console.error(err);
+            document.getElementById('mergeProjectsList').innerHTML = '<div class="error">Failed to load projects</div>';
+        }
+    };
+
+    const mergeBtn = document.getElementById('mergeBtn');
+    if (mergeBtn) {
+        mergeBtn.addEventListener('click', async () => {
+            const newName = document.getElementById('mergedProjectName').value.trim();
+            if (!newName) {
+                showToast('Please enter a name for the merged project', 'error');
+                return;
+            }
+            const checkboxes = document.querySelectorAll('#mergeProjectsList input[type="checkbox"]:checked');
+            if (checkboxes.length === 0) {
+                showToast('Please select at least one project to merge', 'error');
+                return;
+            }
+            const selectedProjects = Array.from(checkboxes).map(cb => cb.value);
+            const format = document.querySelector('input[name="exportFormat"]:checked').value;
+            
+            mergeBtn.disabled = true;
+            mergeBtn.innerHTML = '<span>⏳ Merging...</span>';
+            
+            try {
+                const result = await eel.merge_projects(selectedProjects, newName, format)();
+                if (result.success) {
+                    showToast(`Merged project "${result.new_project_name}" created and exported to ${format.toUpperCase()}!`, 'success');
+                    if (typeof refreshProjectsList === 'function') refreshProjectsList();
+                    if (typeof refreshDashboard === 'function') refreshDashboard();
+                    document.getElementById('mergedProjectName').value = '';
+                    checkboxes.forEach(cb => cb.checked = false);
+                    if (result.export_path) {
+                        showToast(`File saved: ${result.export_path}`, 'success');
+                    }
+                } else {
+                    showToast(`Merge failed: ${result.error}`, 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Merge failed: backend error', 'error');
+            } finally {
+                mergeBtn.disabled = false;
+                mergeBtn.innerHTML = '🔀 Merge & Export';
+            }
+        });
+    }
+
+    // Initial loads
     refreshProjectsList();
 });
