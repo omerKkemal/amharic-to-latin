@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import eel
 import unicodedata
 import json
